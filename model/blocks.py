@@ -23,10 +23,11 @@ class Conv2D_BN_LeakyRelu(tf.keras.layers.Layer):
 
 def getResnetBlock(inputs, num_filter, num_repeat, training=False):
     x = Conv2D_BN_LeakyRelu(num_filter, 3, down_sample=True)(inputs, training=training)
+    tmp_x = x
     for i in range(num_repeat):
         x = Conv2D_BN_LeakyRelu(num_filter//2, 1, down_sample=False)(x, training=training)
         x = Conv2D_BN_LeakyRelu(num_filter, 3, down_sample=False)(x, training=training)
-        x = tf.keras.layers.Add()([x,inputs])
+        x = tf.keras.layers.Add()([x, tmp_x])
     return x
 
 def getDarkNet53(inputs, training=False):
