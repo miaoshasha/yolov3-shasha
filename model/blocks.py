@@ -32,10 +32,19 @@ def getResnetBlock(inputs, num_filter, num_repeat, training=False):
     return x
 
 def getDarkNet53(inputs, training=False):
-    x = Conv2D_BN_LeakyRelu(32, 3, down_sample=True)(inputs)
+    x = Conv2D_BN_LeakyRelu(32, 3, down_sample=False)(inputs)
     x = getResnetBlock(x, 64, 1, training=training)
     x = getResnetBlock(x, 128, 2, training=training)
     x = getResnetBlock(x, 256, 8, training=training)
+    out_1 = x
     x = getResnetBlock(x, 512, 8, training=training)
+    out_2 = x
     x = getResnetBlock(x, 1024, 4, training=training)
-    return x
+    return out_1, out_2, x
+
+def get6Layers(inputs, num_filters, out_filters):
+    pass
+
+
+def getYoloV3():
+    pass
