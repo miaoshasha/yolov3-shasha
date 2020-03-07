@@ -1,6 +1,6 @@
 import tensorflow as tf
-from model.blocks import getDarkNet53
+from model.blocks import getYoloV3
 inputs = tf.keras.Input(shape=(416, 416, 3), name='img')
-outputs = getDarkNet53(inputs)
+outputs = getYoloV3(inputs, 6, 100)
 model = tf.keras.Model(inputs, outputs, name='darknet53')
 model.summary()

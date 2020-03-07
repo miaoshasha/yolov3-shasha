@@ -43,8 +43,29 @@ def getDarkNet53(inputs, training=False):
     return out_1, out_2, x
 
 def get6Layers(inputs, num_filters, out_filters):
-    pass
+    x = Conv2D_BN_LeakyRelu(num_filters, 1, down_sample=False)(inputs)
+    x = Conv2D_BN_LeakyRelu(num_filters*2, 3, down_sample=False)(x)
+    x = Conv2D_BN_LeakyRelu(num_filters, 1, down_sample=False)(x)
+    x = Conv2D_BN_LeakyRelu(num_filters*2, 3, down_sample=False)(x)
+    x = Conv2D_BN_LeakyRelu(num_filters, 1, down_sample=False)(x)
+    out_1 = x
+    x = Conv2D_BN_LeakyRelu(num_filters*2, 3, down_sample=False)(x)
+    x = Conv2D_BN_LeakyRelu(out_filters, 1, down_sample=False)(x)
+    return out_1, x
 
+def getYoloV3(inputs, num_anchors, num_classes):
+    out_1, out_2, out_3 = getDarkNet53(inputs)
 
-def getYoloV3():
-    pass
+    x, y1 = get6Layers(out_3, 512, num_anchors*(num_classes+5))
+    x = Conv2D_BN_LeakyRelu(256, 1, down_sample=False)(x)
+    x = tf.keras.layers.UpSampling2D(2)(x)
+    x = tf.keras.layers.concatenate([x, out_2])
+
+    x, y2 = get6Layers(x, 256, num_anchors*(num_classes+5))
+    x = Conv2D_BN_LeakyRelu(128, 1, down_sample=False)(x)
+    x = tf.keras.layers.UpSampling2D(2)(x)
+    x = tf.keras.layers.concatenate([x, out_1])
+
+    x, y3 = get6Layers(x, 128, num_anchors*(num_classes+5))
+    
+    return y1, y2, y3
