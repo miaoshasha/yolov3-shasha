@@ -22,7 +22,8 @@ class Conv2D_BN_LeakyRelu(tf.keras.layers.Layer):
         return x
 
 def getResnetBlock(inputs, num_filter, num_repeat, training=False):
-    x = Conv2D_BN_LeakyRelu(num_filter, 3, down_sample=True)(inputs, training=training)
+    x = tf.keras.layers.ZeroPadding2D(((1,0),(1,0)))(inputs)
+    x = Conv2D_BN_LeakyRelu(num_filter, 3, down_sample=True)(x, training=training)
     for i in range(num_repeat):
         tmp_x = x
         x = Conv2D_BN_LeakyRelu(num_filter//2, 1, down_sample=False)(x, training=training)
